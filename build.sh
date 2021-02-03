@@ -15,5 +15,3 @@ cp -r esmini/resources/ .
 
 python3 tests/pyesmini_tests.py
 python3 tests/pyesminiRM_tests.py
-
-mv
