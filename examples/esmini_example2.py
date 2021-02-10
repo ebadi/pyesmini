@@ -7,7 +7,7 @@ sys.path.insert(0, parentdir)
 
 from pyesmini.pyesmini import *
 
-pyesmini = PyEsmini("resources/xosc/cut-in.xosc")
+pyesmini = PyEsmini("resources/xosc/cut-in.xosc", h = 400)
 
 print("Number of objects:", pyesmini.getNumberOfObjects())
 print("Open Drive file: ", pyesmini.getODRFilename())

@@ -94,12 +94,8 @@ class PyEsmini:
     @param oscAsXMLString OpenSCENARIO XML as string
     '''
 
-    def __init__(self, osc, disable_ctrls=False, use_viewer=True, threads=False, record=False, oscFile=True):
-        self.disable_ctrls = disable_ctrls
-        self.use_viewer = use_viewer
-
-        self.threads = threads
-        self.record = record
+    def __init__(self, osc, disable_ctrls=False, use_viewer=True, threads=False, recordFile="", oscFile=True, x=60,
+                 y=60, w=800, h=400):
 
         dir_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -113,6 +109,48 @@ class PyEsmini:
             print("Unsupported platform: {}".format(platform))
             raise Exception("Loading shared library: shared library not found")
 
+        self.se.SE_InitWithArgs.argtypes = c_int, POINTER(c_char_p)
+        self.se.SE_InitWithArgs.restype = c_int
+
+        self.disable_ctrls = disable_ctrls
+        self.use_viewer = use_viewer
+
+        ArgumentList = ["OpenScenarioEditor"]
+        if threads:
+            ArgumentList.append("--threads")
+
+        if len(recordFile) > 0:
+            ArgumentList.append("--record")
+            ArgumentList.append(recordFile)
+
+        if oscFile:
+            ArgumentList.append("--osc")
+            ArgumentList.append(osc)
+        else:
+            ArgumentList.append("--osc_str")
+            ArgumentList.append(osc)
+        if disable_ctrls:
+            ArgumentList.append("--disable_controllers")
+
+        if use_viewer:
+            ArgumentList.append("--window")
+            ArgumentList.append(str(x) + " " + str(y) + " " + str(w) + " " + str(h))
+        else:
+            ArgumentList.append("--headless")
+        arr = (ctypes.c_char_p * len(ArgumentList))()
+        arr[:] = [s.encode('utf-8') for s in ArgumentList]
+
+        if self.se.SE_InitWithArgs(len(ArgumentList), arr) < 0:
+            raise Exception("Init failed")
+
+        '''
+        if oscFile:
+            if self.se.SE_Init(osc, self.disable_ctrls, self.use_viewer, self.threads, self.record) < 0:
+                raise Exception("loadOSCfile Error: Make sure that the OSC file is not corrupted.")
+        else:
+            if self.se.SE_InitWithString(osc, self.disable_ctrls, self.use_viewer, self.threads, self.record) < 0:
+                raise Exception("loadOSC Error: Make sure that the OSC XML string is not corrupted.")
+        '''
         self.se.SE_Init.argtypes = [String, c_int, c_int, c_int, c_int]
         self.se.SE_Init.restype = c_int
 
@@ -259,13 +297,6 @@ class PyEsmini:
         self.se.SE_SimpleVehicleGetState.argtypes = [POINTER(None), POINTER(SimpleVehicleState)]
         self.se.SE_SimpleVehicleGetState.restype = None
 
-        if oscFile:
-            if self.se.SE_Init(osc, self.disable_ctrls, self.use_viewer, self.threads, self.record) < 0:
-                raise Exception("loadOSCfile Error: Make sure that the OSC file is not corrupted.")
-        else:
-            if self.se.SE_InitWithString(osc, self.disable_ctrls, self.use_viewer, self.threads, self.record) < 0:
-                raise Exception("loadOSC Error: Make sure that the OSC XML string is not corrupted.")
-
     '''
     Add a search path for OpenDRIVE and 3D model files
     @param path Path to a directory
@@ -379,7 +410,7 @@ class PyEsmini:
             return data.value
 
     def getODRManager(
-            self):  # Question: what can be done with ODR manager handle? Should we write a wrapper for odrmanager too or is it already done? https://github.com/esmini/esmini/blob/master/EnvironmentSimulator/Applications/odrviewer/main.cpp
+            self):
         ### TODO : c_ubyte
         try:
             return self.se.SE_GetODRManager()
@@ -471,7 +502,7 @@ class PyEsmini:
     '''
 
     def getNumberOfObjects(self):
-        return self.se.SE_GetNumberOfObjects()  # TODO Question: Is the number of objects changes during the life time of a scenario. Does it need to refilled in each iteration?
+        return self.se.SE_GetNumberOfObjects()
 
     '''
     Get the state of specified object
@@ -606,7 +637,6 @@ class PyEsmini:
         print("callback_func:::::", callback_func)
         print("callback_type:::::", callback_type)
 
-        # TODO : Segmentation fault (core dumped)
         self.se.SE_RegisterObjectCallback(object_id, callback_func, 0)
 
     ################# OSI interface #################
@@ -678,7 +708,7 @@ class PyEsmini:
     The SE_GetOSIRoadLane function returns a char array containing the osi Lane Boundary information/message with the specified GLOBAL id
     '''
 
-    ###  TODO: Detect right encoding and convert return value
+    ### TODO: Detect right encoding and convert return value
     def getOSILaneBoundary(self, global_id):
         cint = c_int(0)
         strc = self.se.SE_GetOSILaneBoundary(byref(cint), global_id)
@@ -740,7 +770,7 @@ class PyEsmini:
     '''
 
     def simpleVehicleCreate(self, x, y, h, length):
-        self.se.SE_SimpleVehicleCreate.errcheck = lambda v, *a: cast(v, c_void_p)  ### Question Why this is here?
+        self.se.SE_SimpleVehicleCreate.errcheck = lambda v, *a: cast(v, c_void_p)  ### TODO ?
         return self.se.SE_SimpleVehicleCreate(x, y, h, length)
 
     '''

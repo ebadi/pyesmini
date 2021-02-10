@@ -8,9 +8,8 @@ To build on Ubuntu, simply run the following command that downloads the codes an
 
 A sample Python code:
 ```
-XOSCFILE = "resources/xosc/pedestrian.xosc"
-pyesmini = PyEsmini(XOSCFILE)
-print(">>> First object name: ", pyesmini.getObjectName(0))
+pyesmini = PyEsmini("resources/xosc/pedestrian.xosc")
+print("First object name: ", pyesmini.getObjectName(0))
 
 for i in range(500):
     pyesmini.step()

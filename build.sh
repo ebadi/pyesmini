@@ -3,7 +3,7 @@ sudo apt install build-essential git pkg-config libgl1-mesa-dev libpthread-stubs
 
 git clone https://github.com/esmini/esmini.git esmini
 cd esmini
-git checkout b772909dae9205aaacccd2692dc42599888afa57 # 1st Feb 2021
+git checkout b772909dae9205aaacccd2692dc42599888afa57 # 1st Feb 2021 = esmini 2.1.5 (build 1108)
 mkdir build
 cd build
 cmake ../ -DUSE_OSG=true -DCMAKE_BUILD_TYPE=Release

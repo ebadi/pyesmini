@@ -53,7 +53,7 @@ class PositionDiff(Structure):
 
 class PyEsminiRM:
     # def RM_Init(const char *odrFilename); ### TODO: What is the return value?
-    def __init__(self, odrFilename):
+    def __init__(self, odrFilename , fromFile= True):
         dir_path = os.path.dirname(os.path.realpath(__file__))
 
         if platform == "linux" or platform == "linux2":
@@ -65,6 +65,19 @@ class PyEsminiRM:
         else:
             print("Unsupported platform: {}".format(platform))
             raise Exception("Loading shared library: shared library not found")
+
+        self.se.RM_Init.argtypes = [String]
+        self.se.RM_Init.restype = c_int
+
+        self.se.RM_InitWithPointer.argtypes = [c_void_p]
+        self.se.RM_InitWithPointer.restype = c_int
+
+        if fromFile:
+            self.se.RM_Init(odrFilename)
+        else:
+            self.se.RM_InitWithPointer(odrFilename)
+
+        ### REST OF INIT
 
         self.se.RM_CreatePosition.argtypes = []
         self.se.RM_CreatePosition.restype = c_int
@@ -123,11 +136,7 @@ class PyEsminiRM:
         self.se.RM_SubtractAFromB.argtypes = [c_int, c_int, POINTER(PositionDiff)]
         self.se.RM_SubtractAFromB.restype = c_int
 
-        self.se.RM_Init.argtypes = [String]
-        self.se.RM_Init.restype = c_int
-        self.se.RM_Init(odrFilename)
-
-    def RM_Close(self):
+    def close(self):
         self.se.RM_Close.argtypes = []
         self.se.RM_Close.restype = c_int
         return self.se.RM_Close()
@@ -137,7 +146,7 @@ class PyEsminiRM:
     @return Handle to the position object, to use for operations
     '''
 
-    def RM_CreatePosition(self):
+    def createPosition(self):
         return self.se.RM_CreatePosition()
 
     '''
@@ -145,7 +154,7 @@ class PyEsminiRM:
     @return Number of created position objects
     '''
 
-    def RM_GetNrOfPositions(self):
+    def getNrOfPositions(self):
         return self.se.RM_GetNrOfPositions()
 
     '''
@@ -154,8 +163,8 @@ class PyEsminiRM:
     @return 0 if succesful, -1 if specified position(s) could not be deleted
     '''
 
-    def RM_DeletePosition(self, handle):
-        if self.se.RM_DeletePosition() < 0:
+    def deletePosition(self, handle):
+        if self.se.RM_DeletePosition(handle) < 0:
             return False
         else:
             return True
@@ -165,7 +174,7 @@ class PyEsminiRM:
     @return Number of roads
     '''
 
-    def RM_GetNumberOfRoads(self):
+    def getNumberOfRoads(self):
         return self.se.RM_GetNumberOfRoads()
 
     '''
@@ -174,8 +183,8 @@ class PyEsminiRM:
     @return The ID of the road
     '''
 
-    def RM_GetIdOfRoadFromIndex(self, index):
-        return self.se.RM_GetIdOfRoadFromIndex()
+    def getIdOfRoadFromIndex(self, index):
+        return self.se.RM_GetIdOfRoadFromIndex(index)
 
     '''
     Get the lenght of road with specified ID
@@ -183,8 +192,8 @@ class PyEsminiRM:
     @return The length of the road if ID exists, else 0.0
     '''
 
-    def RM_GetRoadLength(self, id):
-        return self.se.RM_GetRoadLength()
+    def getRoadLength(self, id):
+        return self.se.RM_GetRoadLength(id)
 
     '''
     Get the number of drivable lanes of specified road
@@ -193,8 +202,8 @@ class PyEsminiRM:
     @return The number of drivable lanes
     '''
 
-    def RM_GetRoadNumberOfLanes(self, roadId, s):
-        return self.se.RM_GetRoadNumberOfLanes()
+    def getRoadNumberOfLanes(self, roadId, s):
+        return self.se.RM_GetRoadNumberOfLanes(roadId, s)
 
     '''
     Get the ID of the lane given by index
@@ -204,8 +213,8 @@ class PyEsminiRM:
     @return The lane ID
     '''
 
-    def RM_GetLaneIdByIndex(self, roadId, laneIndex, s):
-        return self.se.RM_GetLaneIdByIndex()
+    def getLaneIdByIndex(self, roadId, laneIndex, s):
+        return self.se.RM_GetLaneIdByIndex(roadId, laneIndex, s)
 
     '''
     Set position from road coordinates, world coordinates being calculated
@@ -218,7 +227,7 @@ class PyEsminiRM:
     @return 0 if successful, -1 if not
     '''
 
-    def RM_SetLanePosition(self, handle, roadId, laneId, laneOffset, s, align=True):
+    def setLanePosition(self, handle, roadId, laneId, laneOffset, s, align=True):
         if self.se.RM_GetLaneIdByIndex(handle, roadId, laneId, laneOffset, s, align) < 0:
             return False
         else:
@@ -231,7 +240,7 @@ class PyEsminiRM:
     @return 0 if successful, -1 if not
     '''
 
-    def RM_SetS(self, handle, s):
+    def setS(self, handle, s):
         if self.se.RM_SetS(handle, s) < 0:
             return False
         else:
@@ -249,7 +258,7 @@ class PyEsminiRM:
     @return 0 if successful, -1 if not
     '''
 
-    def RM_SetWorldPosition(self, handle, x, y, z, h, p, r):
+    def stWorldPosition(self, handle, x, y, z, h, p, r):
         if self.se.RM_SetWorldPosition(handle, x, y, z, h, p, r) < 0:
             return False
         else:
@@ -264,7 +273,7 @@ class PyEsminiRM:
     @return 0 if successful, -1 if not
     '''
 
-    def RM_SetWorldXYHPosition(self, handle, x, y, h):
+    def setWorldXYHPosition(self, handle, x, y, h):
         if self.se.RM_SetWorldXYHPosition(handle, x, y, h) < 0:
             return False
         else:
@@ -280,7 +289,7 @@ class PyEsminiRM:
     @return 0 if successful, -1 if not
     '''
 
-    def RM_SetWorldXYHPosition(self, handle, x, y, h):
+    def setWorldXYHPosition(self, handle, x, y, h):
         if self.se.RM_SetWorldXYHPosition(handle, x, y, h) < 0:
             return False
         else:
@@ -294,7 +303,7 @@ class PyEsminiRM:
     @return 0 if successful, -1 if not
     '''
 
-    def RM_PositionMoveForward(self, handle, dist, strategy):
+    def positionMoveForward(self, handle, dist, strategy):
         if self.se.RM_PositionMoveForward(handle, dist, strategy) < 0:
             return False
         else:
@@ -307,7 +316,7 @@ class PyEsminiRM:
     @return 0 if successful, -1 if not
     '''
 
-    def RM_GetPositionData(self, handle):
+    def getPositionData(self, handle):
         # PositionData *data
         positionData = PositionData()
         if self.se.RM_GetPositionData(handle, positionData) < 0:
@@ -321,7 +330,7 @@ class PyEsminiRM:
     @return 0 if successful, -1 if not
     '''
 
-    def RM_GetSpeedLimit(self, handle):
+    def getSpeedLimit(self, handle):
         if self.se.RM_GetSpeedLimit(handle) < 0:
             return False
         else:
@@ -336,7 +345,7 @@ class PyEsminiRM:
     @return 0 if successful, -1 if not
     '''
 
-    def RM_GetLaneInfo(self, handle, lookahead_distance, lookAheadMode):
+    def getLaneInfo(self, handle, lookahead_distance, lookAheadMode):
         # RoadLaneInfo *data
         roadLaneInfo = RoadLaneInfo()
         if self.se.RM_GetLaneInfo(handle, lookahead_distance, roadLaneInfo, lookAheadMode) < 0:
@@ -353,7 +362,7 @@ class PyEsminiRM:
     @return 0 if successful, -1 if not
     '''
 
-    def RM_GetProbeInfo(handle, lookahead_distance, lookAheadMode):
+    def getProbeInfo(self, handle, lookahead_distance, lookAheadMode):
         # RoadProbeInfo *data
         roadProbeInfo = RoadProbeInfo()
         if self.se.RM_GetProbeInfo(handle, lookahead_distance, roadProbeInfo, lookAheadMode) < 0:
@@ -369,7 +378,7 @@ class PyEsminiRM:
     @return true if a valid path between the road positions was found and calculations could be performed
     '''
 
-    def RM_SubtractAFromB(handleA, handleB):
+    def subtractAFromB(self, handleA, handleB):
         # PositionDiff *pos_diff
         positionDiff = PositionDiff()
         return self.se.RM_SubtractAFromB(handleA, handleB, positionDiff)
