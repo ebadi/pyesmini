@@ -143,7 +143,7 @@ class PyEsminiRM:
 
     '''
     Create a position object
-    @return Handle to the position object, to use for operations
+    @return Index for the position object, to use for operations
     '''
 
     def createPosition(self):
@@ -159,12 +159,12 @@ class PyEsminiRM:
 
     '''
     Delete one or all position object(s)
-    @param hande Handle to the position object. Set -1 to delete all.
+    @param hande Index for the position object. Set -1 to delete all.
     @return 0 if succesful, -1 if specified position(s) could not be deleted
     '''
 
-    def deletePosition(self, handle):
-        if self.se.RM_DeletePosition(handle) < 0:
+    def deletePosition(self, posIndx):
+        if self.se.RM_DeletePosition(posIndx) < 0:
             return False
         else:
             return True
@@ -218,7 +218,7 @@ class PyEsminiRM:
 
     '''
     Set position from road coordinates, world coordinates being calculated
-    @param handle Handle to the position object
+    @param posIndx Index for the position object
     @param roadId Road specifier
     @param laneId Lane specifier
     @param laneOffset Offset from lane center
@@ -227,28 +227,28 @@ class PyEsminiRM:
     @return 0 if successful, -1 if not
     '''
 
-    def setLanePosition(self, handle, roadId, laneId, laneOffset, s, align=True):
-        if self.se.RM_GetLaneIdByIndex(handle, roadId, laneId, laneOffset, s, align) < 0:
+    def setLanePosition(self, posIndx, roadId, laneId, laneOffset, s, align=True):
+        if self.se.RM_GetLaneIdByIndex(posIndx, roadId, laneId, laneOffset, s, align) < 0:
             return False
         else:
             return True
 
     '''
     Set s (distance) part of a lane position, world coordinates being calculated
-    @param handle Handle to the position object
+    @param posIndx Index for the position object
     @param s Distance along the specified road
     @return 0 if successful, -1 if not
     '''
 
-    def setS(self, handle, s):
-        if self.se.RM_SetS(handle, s) < 0:
+    def setS(self, posIndx, s):
+        if self.se.RM_SetS(posIndx, s) < 0:
             return False
         else:
             return True
 
     '''
     Set position from world coordinates, road coordinates being calculated
-    @param handle Handle to the position object
+    @param posIndx Index for the position object
     @param x cartesian coordinate x value
     @param y cartesian coordinate y value
     @param z cartesian coordinate z value
@@ -258,23 +258,23 @@ class PyEsminiRM:
     @return 0 if successful, -1 if not
     '''
 
-    def stWorldPosition(self, handle, x, y, z, h, p, r):
-        if self.se.RM_SetWorldPosition(handle, x, y, z, h, p, r) < 0:
+    def stWorldPosition(self, posIndx, x, y, z, h, p, r):
+        if self.se.RM_SetWorldPosition(posIndx, x, y, z, h, p, r) < 0:
             return False
         else:
             return True
 
     '''
     Set position from world X, Y and heading coordinates; Z, pitch and road coordinates being calculated
-    @param handle Handle to the position object
+    @param posIndx Index for the position object
     @param x cartesian coordinate x value
     @param y cartesian coordinate y value
     @param h rotation heading value
     @return 0 if successful, -1 if not
     '''
 
-    def setWorldXYHPosition(self, handle, x, y, h):
-        if self.se.RM_SetWorldXYHPosition(handle, x, y, h) < 0:
+    def setWorldXYHPosition(self, posIndx, x, y, h):
+        if self.se.RM_SetWorldXYHPosition(posIndx, x, y, h) < 0:
             return False
         else:
             return True
@@ -282,103 +282,103 @@ class PyEsminiRM:
     '''
     Set position from world X, Y, Z and heading coordinates; pitch and road coordinates being calculated
     Setting a Z value may have effect in mapping the position to the closest road, e.g. overpass
-    @param handle Handle to the position object
+    @param posIndx Index for the position object
     @param x cartesian coordinate x value
     @param y cartesian coordinate y value
     @param h rotation heading value
     @return 0 if successful, -1 if not
     '''
 
-    def setWorldXYHPosition(self, handle, x, y, h):
-        if self.se.RM_SetWorldXYHPosition(handle, x, y, h) < 0:
+    def setWorldXYHPosition(self, posIndx, x, y, h):
+        if self.se.RM_SetWorldXYHPosition(posIndx, x, y, h) < 0:
             return False
         else:
             return True
 
     '''
     Move position forward along the road. Choose way randomly though any junctions.
-    @param handle Handle to the position object
+    @param posIndx Index for the position object
     @param dist Distance (meter) to move
     @param strategy How to move in a junction where multiple route options appear, see Junction::JunctionStrategyType
     @return 0 if successful, -1 if not
     '''
 
-    def positionMoveForward(self, handle, dist, strategy):
-        if self.se.RM_PositionMoveForward(handle, dist, strategy) < 0:
+    def positionMoveForward(self, posIndx, dist, strategy):
+        if self.se.RM_PositionMoveForward(posIndx, dist, strategy) < 0:
             return False
         else:
             return True
 
     '''
     Get the fields of the position of specified index
-    @param handle Handle to the position object
+    @param posIndx Index for the position object
     @param data Struct to fill in the values
     @return 0 if successful, -1 if not
     '''
 
-    def getPositionData(self, handle):
+    def getPositionData(self, posIndx):
         # PositionData *data
         positionData = PositionData()
-        if self.se.RM_GetPositionData(handle, positionData) < 0:
+        if self.se.RM_GetPositionData(posIndx, positionData) < 0:
             return None
         else:
             return positionData
 
     '''
     Retrieve current speed limit (at current road, s-value and lane) based on ODR type elements or nr of lanes
-    @param handle Handle to the position object
+    @param posIndx Index for the position object
     @return 0 if successful, -1 if not
     '''
 
-    def getSpeedLimit(self, handle):
-        if self.se.RM_GetSpeedLimit(handle) < 0:
+    def getSpeedLimit(self, posIndx):
+        if self.se.RM_GetSpeedLimit(posIndx) < 0:
             return False
         else:
             return True
 
     '''
     Retrieve lane information from the position object (at current road, s-value and lane)
-    @param handle Handle to the position object
+    @param posIndx Index for the position object
     @param lookahead_distance The distance, along the road, to the poof interest
     @param data Struct including all result values, see RoadLaneInfo typedef
     @param lookAheadMode Measurement strategy: Along reference lane, lane center or current lane offset. See roadmanager::Position::LookAheadMode enum
     @return 0 if successful, -1 if not
     '''
 
-    def getLaneInfo(self, handle, lookahead_distance, lookAheadMode):
+    def getLaneInfo(self, posIndx, lookahead_distance, lookAheadMode):
         # RoadLaneInfo *data
         roadLaneInfo = RoadLaneInfo()
-        if self.se.RM_GetLaneInfo(handle, lookahead_distance, roadLaneInfo, lookAheadMode) < 0:
+        if self.se.RM_GetLaneInfo(posIndx, lookahead_distance, roadLaneInfo, lookAheadMode) < 0:
             return None
         else:
             return roadLaneInfo
 
     '''
     As RM_GetLaneInfo plus relative location of poof interest (probe) from current position
-    @param handle Handle to the position object from which to measure
+    @param posIndx Index for the position object from which to measure
     @param lookahead_distance The distance, along the road to the probe (poof interest)
     @param data Struct including all result values, see RoadProbeInfo typedef
     @param lookAheadMode Measurement strategy: Along reference lane, lane center or current lane offset. See roadmanager::Position::LookAheadMode enum
     @return 0 if successful, -1 if not
     '''
 
-    def getProbeInfo(self, handle, lookahead_distance, lookAheadMode):
+    def getProbeInfo(self, posIndx, lookahead_distance, lookAheadMode):
         # RoadProbeInfo *data
         roadProbeInfo = RoadProbeInfo()
-        if self.se.RM_GetProbeInfo(handle, lookahead_distance, roadProbeInfo, lookAheadMode) < 0:
+        if self.se.RM_GetProbeInfo(posIndx, lookahead_distance, roadProbeInfo, lookAheadMode) < 0:
             return None
         else:
             return roadProbeInfo
 
     '''
     Find out the difference between two position objects, i.e. delta distance (long and lat) and delta laneId
-    @param handleA Handle to the position object from which to measure
-    @param handleB Handle to the position object to which the distance is measured
+    @param posIndxA Index for the position object from which to measure
+    @param posIndxB Index for the position object to which the distance is measured
     @param pos_diff Struct including all result values, see PositionDiff typedef
     @return true if a valid path between the road positions was found and calculations could be performed
     '''
 
-    def subtractAFromB(self, handleA, handleB):
+    def subtractAFromB(self, posIndxA, posIndxB):
         # PositionDiff *pos_diff
         positionDiff = PositionDiff()
-        return self.se.RM_SubtractAFromB(handleA, handleB, positionDiff)
+        return self.se.RM_SubtractAFromB(posIndxA, posIndxB, positionDiff)

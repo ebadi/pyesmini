@@ -9,8 +9,12 @@ from pyesmini.pyesmini import *
 from pyesmini.pyesminiRM import *
 
 pyesmini = PyEsmini("resources/xosc/cut-in.xosc")
-rm = PyEsminiRM(pyesmini.getODRManager(), fromFile= False)
-print(rm.RM_GetNumberOfRoads())
-print(rm.RM_GetRoadLength(0))
-rm.RM_Close()
+rm = PyEsminiRM(pyesmini.getODRManager(), fromFile=False)
+print(rm.getNumberOfRoads())
+print(rm.getRoadLength(0))
+
+handle = rm.createPosition()
+handle = rm.createPosition()
+
+rm.close()
 pyesmini.close()
