@@ -143,7 +143,7 @@ class PyEsminiRM:
 
     '''
     Create a position object
-    @return Index for the position object, to use for operations
+    @return Index of the position object, to use for operations
     '''
 
     def createPosition(self):
@@ -159,7 +159,7 @@ class PyEsminiRM:
 
     '''
     Delete one or all position object(s)
-    @param hande Index for the position object. Set -1 to delete all.
+    @param hande Index of the position object. Set -1 to delete all.
     @return 0 if succesful, -1 if specified position(s) could not be deleted
     '''
 
@@ -218,7 +218,7 @@ class PyEsminiRM:
 
     '''
     Set position from road coordinates, world coordinates being calculated
-    @param posIndx Index for the position object
+    @param posIndx Index of the position object
     @param roadId Road specifier
     @param laneId Lane specifier
     @param laneOffset Offset from lane center
@@ -235,7 +235,7 @@ class PyEsminiRM:
 
     '''
     Set s (distance) part of a lane position, world coordinates being calculated
-    @param posIndx Index for the position object
+    @param posIndx Index of the position object
     @param s Distance along the specified road
     @return 0 if successful, -1 if not
     '''
@@ -248,7 +248,7 @@ class PyEsminiRM:
 
     '''
     Set position from world coordinates, road coordinates being calculated
-    @param posIndx Index for the position object
+    @param posIndx Index of the position object
     @param x cartesian coordinate x value
     @param y cartesian coordinate y value
     @param z cartesian coordinate z value
@@ -266,7 +266,7 @@ class PyEsminiRM:
 
     '''
     Set position from world X, Y and heading coordinates; Z, pitch and road coordinates being calculated
-    @param posIndx Index for the position object
+    @param posIndx Index of the position object
     @param x cartesian coordinate x value
     @param y cartesian coordinate y value
     @param h rotation heading value
@@ -282,7 +282,7 @@ class PyEsminiRM:
     '''
     Set position from world X, Y, Z and heading coordinates; pitch and road coordinates being calculated
     Setting a Z value may have effect in mapping the position to the closest road, e.g. overpass
-    @param posIndx Index for the position object
+    @param posIndx Index of the position object
     @param x cartesian coordinate x value
     @param y cartesian coordinate y value
     @param h rotation heading value
@@ -297,7 +297,7 @@ class PyEsminiRM:
 
     '''
     Move position forward along the road. Choose way randomly though any junctions.
-    @param posIndx Index for the position object
+    @param posIndx Index of the position object
     @param dist Distance (meter) to move
     @param strategy How to move in a junction where multiple route options appear, see Junction::JunctionStrategyType
     @return 0 if successful, -1 if not
@@ -311,7 +311,7 @@ class PyEsminiRM:
 
     '''
     Get the fields of the position of specified index
-    @param posIndx Index for the position object
+    @param posIndx Index of the position object
     @param data Struct to fill in the values
     @return 0 if successful, -1 if not
     '''
@@ -326,7 +326,7 @@ class PyEsminiRM:
 
     '''
     Retrieve current speed limit (at current road, s-value and lane) based on ODR type elements or nr of lanes
-    @param posIndx Index for the position object
+    @param posIndx Index of the position object
     @return 0 if successful, -1 if not
     '''
 
@@ -338,7 +338,7 @@ class PyEsminiRM:
 
     '''
     Retrieve lane information from the position object (at current road, s-value and lane)
-    @param posIndx Index for the position object
+    @param posIndx Index of the position object
     @param lookahead_distance The distance, along the road, to the poof interest
     @param data Struct including all result values, see RoadLaneInfo typedef
     @param lookAheadMode Measurement strategy: Along reference lane, lane center or current lane offset. See roadmanager::Position::LookAheadMode enum
@@ -355,7 +355,7 @@ class PyEsminiRM:
 
     '''
     As RM_GetLaneInfo plus relative location of poof interest (probe) from current position
-    @param posIndx Index for the position object from which to measure
+    @param posIndx Index of the position object from which to measure
     @param lookahead_distance The distance, along the road to the probe (poof interest)
     @param data Struct including all result values, see RoadProbeInfo typedef
     @param lookAheadMode Measurement strategy: Along reference lane, lane center or current lane offset. See roadmanager::Position::LookAheadMode enum
@@ -372,8 +372,8 @@ class PyEsminiRM:
 
     '''
     Find out the difference between two position objects, i.e. delta distance (long and lat) and delta laneId
-    @param posIndxA Index for the position object from which to measure
-    @param posIndxB Index for the position object to which the distance is measured
+    @param posIndxA Index of the position object from which to measure
+    @param posIndxB Index of the position object to which the distance is measured
     @param pos_diff Struct including all result values, see PositionDiff typedef
     @return true if a valid path between the road positions was found and calculations could be performed
     '''
