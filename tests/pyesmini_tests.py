@@ -23,7 +23,7 @@ def mycallback(state_ptr, b):
     print("Callback for obj {}: x={} y={}".format(state.id, state.x, state.y))
 
 
-class TestStringMethods(unittest.TestCase):
+class TestPyEsminiMethods(unittest.TestCase):
 
     def test_registerObjectCallback(self):
         global x

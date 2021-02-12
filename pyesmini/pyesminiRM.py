@@ -103,9 +103,6 @@ class PyEsminiRM:
         self.se.RM_GetLaneIdByIndex.argtypes = [c_int, c_int, c_float]
         self.se.RM_GetLaneIdByIndex.restype = c_int
 
-        self.se.RM_GetLaneIdByIndex.argtypes = [c_int, c_int, c_float, c_float, c_bool]
-        self.se.RM_GetLaneIdByIndex.restype = c_int
-
         self.se.RM_SetS.argtypes = [c_int, c_float]
         self.se.RM_SetS.restype = c_int
 
@@ -258,7 +255,7 @@ class PyEsminiRM:
     @return 0 if successful, -1 if not
     '''
 
-    def stWorldPosition(self, posIndx, x, y, z, h, p, r):
+    def setWorldPosition(self, posIndx, x, y, z, h, p, r):
         if self.se.RM_SetWorldPosition(posIndx, x, y, z, h, p, r) < 0:
             return False
         else:
@@ -289,8 +286,8 @@ class PyEsminiRM:
     @return 0 if successful, -1 if not
     '''
 
-    def setWorldXYHPosition(self, posIndx, x, y, h):
-        if self.se.RM_SetWorldXYHPosition(posIndx, x, y, h) < 0:
+    def setWorldXYZHPosition(self, posIndx, x, y, z, h):
+        if self.se.RM_SetWorldXYZHPosition(posIndx, x, y,z, h) < 0:
             return False
         else:
             return True
