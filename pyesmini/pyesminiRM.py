@@ -69,13 +69,13 @@ class PyEsminiRM:
         self.se.RM_Init.argtypes = [String]
         self.se.RM_Init.restype = c_int
 
-        self.se.RM_InitWithPointer.argtypes = [c_void_p]
-        self.se.RM_InitWithPointer.restype = c_int
+        #self.se.RM_InitWithPointer.argtypes = [c_void_p]
+        #self.se.RM_InitWithPointer.restype = c_int
 
         if fromFile:
             self.se.RM_Init(odrFilename)
-        else:
-            self.se.RM_InitWithPointer(odrFilename)
+        #else:
+        #    self.se.RM_InitWithPointer(odrFilename)
 
         ### REST OF INIT
 
